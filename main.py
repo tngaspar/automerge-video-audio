@@ -21,7 +21,7 @@ for audio in audio_files :
     if audioNum ==1:
         audios.append([AudioFileClip(audio), 0 , audioDetails.tag.title, audioDetails.tag.artist, audioDetails.tag.album])
     else:
-        audios.append([AudioFileClip(audio), currentDuration, audioDetails.tag.Title, audioDetails.tag.artist, audioDetails.tag.album])
+        audios.append([AudioFileClip(audio), currentDuration, audioDetails.tag.title, audioDetails.tag.artist, audioDetails.tag.album])
     currentDuration = currentDuration + audios[-1][0].duration-5
     audioNum = audioNum + 1
 
