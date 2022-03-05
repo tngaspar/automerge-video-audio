@@ -14,7 +14,7 @@ Automatically merges a set of music files and video files into an unique mp4 vid
 
 **Output:** .mp4 video file in Outputs folder.
 
-**Execution** for quick deployment and executino I created a batfile that:
+**Execution** for quick deployment and executino I created a BAT file that:
  * deletes old .mp3 temp files from interrupted executions;
  * checks if there are any audio and video files in the corresponding folders;
  * runs main.py after checking for input to create final video.
