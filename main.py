@@ -1,6 +1,5 @@
 # %%
 from moviepy.editor import * 
-import eyed3 
 from datetime import datetime
 now = datetime.now()
 
@@ -17,11 +16,10 @@ audios = []
 audioNum = 1
 currentDuration = 0
 for audio in audio_files :
-    audioDetails = eyed3.load(audio)
     if audioNum ==1:
-        audios.append([AudioFileClip(audio), 0 , audioDetails.tag.title, audioDetails.tag.artist, audioDetails.tag.album])
+        audios.append([AudioFileClip(audio), 0])
     else:
-        audios.append([AudioFileClip(audio), currentDuration, audioDetails.tag.title, audioDetails.tag.artist, audioDetails.tag.album])
+        audios.append([AudioFileClip(audio), currentDuration])
     currentDuration = currentDuration + audios[-1][0].duration-5
     audioNum = audioNum + 1
 
