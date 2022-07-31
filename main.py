@@ -26,7 +26,7 @@ for audio in audio_files :
 #print(audios)
 
 # %%
-audioClips = CompositeAudioClip([audio[0].set_start(audio[1]).audio_fadein(5).audio_fadeout(5) for audio in audios])
+audioClips = CompositeAudioClip([audio[0].set_start(audio[1]).audio_fadein(1).audio_fadeout(1) for audio in audios])
 audioClips.duration
 
 # %%
@@ -55,14 +55,14 @@ for video in video_files :
 
 # %%
 #videoclips = CompositeVideoClip([video[0].set_start(video[1]).crossfadein(2).crossfadeout(2) for video in videos])
-videoclips = concatenate_videoclips([video[0].fadein(2).fadeout(2) for video in videos], method = 'chain')
+videoclips = concatenate_videoclips([video[0].fadein(1).fadeout(1) for video in videos], method = 'compose')
 
 
 # %%
 videoclips.audio = audioClips
 
 looped=videoclips.loop(duration=audioClips.duration)
-looped = looped.fadeout(2)
+looped = looped.fadeout(1)
 print('Audio length: ',audioClips.duration/60)
 print('Video length: ', looped.duration/60)
 looped.write_videofile('output/final_'+ now.strftime("%H.%M.%S_%d.%m.%Y"+ ".mp4") , fps=24, threads = 4)
