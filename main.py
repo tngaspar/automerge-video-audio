@@ -1,71 +1,103 @@
-# %%
-from moviepy.editor import * 
+import os
+import glob
+from moviepy.editor import (
+    AudioFileClip,
+    CompositeAudioClip,
+    VideoFileClip,
+    concatenate_videoclips,
+)
 from datetime import datetime
+
 now = datetime.now()
 
-videoSpeed = 1
-# %%
+# ### SETTINGS - Modify this to your preferences ###
+video_speed = 1  # Speed for all videos. Leave as 1 for normal speed
+video_fade_secs = 1  # Video fade in and out duration in seconds.
+audio_fade_secs = 1  # Audio fade in and out duration in seconds.
+audio_overlap_secs = 0  # Number of seconds between audio clips where both clips overlap. Leave as 0 for no overlap.
 
-audio_folder='music'
+# ### CLEANUP ###
+# removes temporary files from previous interupted executions
+file_list = glob.glob("./final_*TEMP_MPY_wvf_snd.mp3", recursive=False)
+for file in file_list:
+    try:
+        os.remove(file)
+    except OSError:
+        print("Error while deleting file")
 
-audio_files = [audio_folder+'/'+img for img in os.listdir(audio_folder) if img.endswith(".mp3")]
+# ### MAIN ###
+# get list of audio files
+audio_folder = "audio"
+audio_files = [
+    audio_folder + "/" + file
+    for file in os.listdir(audio_folder)
+    if file.endswith(".mp3")
+]
 
-#print(audio_files)
+# get list of video files
+video_folder = "video"
+video_files = [
+    video_folder + "/" + file
+    for file in os.listdir(video_folder)
+    if file.endswith(".mp4")
+]
 
-audios = []
-audioNum = 1
+# Create list of audio clips
+audio_list = []
+audio_num = 1
 currentDuration = 0
-for audio in audio_files :
-    if audioNum ==1:
-        audios.append([AudioFileClip(audio), 0])
+for audio in audio_files:
+    if audio_num == 1:
+        audio_list.append([AudioFileClip(audio), 0])
     else:
-        audios.append([AudioFileClip(audio), currentDuration])
-    currentDuration = currentDuration + audios[-1][0].duration-5
-    audioNum = audioNum + 1
+        audio_list.append([AudioFileClip(audio), currentDuration])
+    currentDuration = currentDuration + audio_list[-1][0].duration - audio_overlap_secs
+    audio_num = audio_num + 1
 
-#print(audios)
+# Merge list of audio clips into one single audio clip
+audioclips = CompositeAudioClip(
+    [
+        audio[0]
+        .set_start(audio[1])
+        .audio_fadein(audio_fade_secs)
+        .audio_fadeout(audio_fade_secs)
+        for audio in audio_list
+    ]
+)
 
-# %%
-audioClips = CompositeAudioClip([audio[0].set_start(audio[1]).audio_fadein(1).audio_fadeout(1) for audio in audios])
-audioClips.duration
-
-# %%
-#concatenate_audioclips(audioClips)
-#audioClips.write_audiofile('main.mp3')
-
-# %%
-video_folder='video'
-video_files = [video_folder+'/'+img for img in os.listdir(video_folder) if img.endswith(".mp4")]
-#print(video_files)
-
-#gets [video, duration of last video]
-videos = []
-videoNum = 1
+# Create list of video clips
+video_list = []
+video_num = 1
 currentDuration = 0
-for video in video_files :
-   if videoNum == 1:
-      videos.append([VideoFileClip(video).speedx(factor=videoSpeed), 0])
-      
-   else:
-      videos.append([VideoFileClip(video).speedx(factor=videoSpeed), currentDuration])
-   currentDuration = currentDuration + videos[-1][0].duration
-   videoNum = videoNum + 1
-#print(videos)
+for video in video_files:
+    if video_num == 1:
+        video_list.append([VideoFileClip(video).speedx(factor=video_speed), 0])
+    else:
+        video_list.append(
+            [VideoFileClip(video).speedx(factor=video_speed), currentDuration]
+        )
+    currentDuration = currentDuration + video_list[-1][0].duration
+    video_num = video_num + 1
 
+# apply fadein and fadeout effects to video clips
+video_list = [
+    video[0].fadein(video_fade_secs).fadeout(video_fade_secs) for video in video_list
+]
 
-# %%
-#videoclips = CompositeVideoClip([video[0].set_start(video[1]).crossfadein(2).crossfadeout(2) for video in videos])
-videoclips = concatenate_videoclips([video[0].fadein(1).fadeout(1) for video in videos], method = 'compose')
+# Merge list of video clips into one single clip
+videoclips = concatenate_videoclips(video_list, method="compose")
 
+# Adds audioclips audio to video clips and overriding videoclips existing audio
+videoclips.audio = audioclips
 
-# %%
-videoclips.audio = audioClips
+# Loops video clips for the duration of the audio clips
+looped = videoclips.loop(duration=audioclips.duration)
+# Adds fadeout at the end of the merged video
+looped = looped.fadeout(video_fade_secs)
 
-looped=videoclips.loop(duration=audioClips.duration)
-looped = looped.fadeout(1)
-print('Audio length: ',audioClips.duration/60)
-print('Video length: ', looped.duration/60)
-looped.write_videofile('output/final_'+ now.strftime("%H.%M.%S_%d.%m.%Y"+ ".mp4") , fps=24, threads = 4)
+print("This 2 lengths should match:")
+print("Audio length:", audioclips.duration, "seconds")
+print("Video length:", looped.duration, "seconds")
 
-
-
+# Creates final video file
+looped.write_videofile("output/final_" + now.strftime("%H.%M.%S_%d.%m.%Y" + ".mp4"))

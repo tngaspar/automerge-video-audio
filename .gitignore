@@ -1,5 +1,6 @@
 #Project specific 
-.vs/
+.vs/*
+.vscode/*
 *.mp3
 *.mp4
 
