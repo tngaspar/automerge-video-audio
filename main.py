@@ -27,20 +27,25 @@ for file in file_list:
 
 # ### MAIN ###
 # get list of audio files
-audio_folder = "audio"
+audio_dir = "audio"
 audio_files = [
-    audio_folder + "/" + file
-    for file in os.listdir(audio_folder)
+    audio_dir + "/" + file
+    for file in os.listdir(audio_dir)
     if file.endswith(".mp3")
 ]
+if len(audio_files) == 0:
+    raise Exception(f"No audio files were found in the {audio_dir} directory.")
 
 # get list of video files
-video_folder = "video"
+video_dir = "video"
 video_files = [
-    video_folder + "/" + file
-    for file in os.listdir(video_folder)
+    video_dir + "/" + file
+    for file in os.listdir(video_dir)
     if file.endswith(".mp4")
 ]
+if len(video_files) == 0:
+    raise Exception(f"No video files were found in the {video_dir} directory.")
+
 
 # Create list of audio clips
 audio_list = []
