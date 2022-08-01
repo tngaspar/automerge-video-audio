@@ -51,7 +51,7 @@ audio/
 
 3. Run the `main.py` script:
 ```bash
-python main.py
+$ python main.py
 ```
 and wait for the execution to complete. 
 
