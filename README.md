@@ -5,7 +5,7 @@ Automatically merges a set of music files and video files into an unique .mp4 vi
 <strong>Overrides video files' audio</strong> with audio from audio files. Useful for creating music videos (examples at the [end](#examples) of this document).
 
 ### Merging video files
-This script is not intended to be used as a video merge tool (audio will always be overritten). For this purpose, you may use this [script](https://gist.github.com/tngaspar/9ba8f14a42f3e40f885aff13630ca5fe) instead.
+This script is not intended to be used as a video merge tool (audio will always be overwritten). For this purpose, you may use this [script](https://gist.github.com/tngaspar/9ba8f14a42f3e40f885aff13630ca5fe) instead.
 
 ## Requirements
 * [MoviePy](https://zulko.github.io/moviepy/) - python module used for programmatic video editing.
